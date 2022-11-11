@@ -1,0 +1,76 @@
+Problem Description
+Given an array of integers, we have to find the maximum possible XOR value using any two integers in the array.
+
+// No need to convert decimal to binary and vice versa 
+import java.util.*;
+
+class TrieNode{
+    TrieNode[] children;
+    TrieNode(){
+        children= new TrieNode[2];  // 0 or 1
+    }
+}
+
+class Trie{
+    TrieNode root;
+    Trie(){
+        root= new TrieNode();
+    }
+
+    public void insert(int n){
+        TrieNode curr = root;
+        for(int i=31;i>=0;i--){
+            int bit = (n>>i) & 1;
+            if(curr.children[bit]==null){
+                curr.children[bit]= new TrieNode();
+            }
+            curr = curr.children[bit];
+        }
+    }
+}
+
+public class MaximumXor {
+    public static void main(String[] args){
+        Scanner sc = new Scanner(System.in); 
+        int n;
+        n = sc.nextInt();
+        ArrayList<Integer> a = new ArrayList<>();
+        for(int i=0;i<n;i++){
+            a.add(sc.nextInt());
+        }
+        int ans = maximumXor(n,a);
+        System.out.println(ans);
+        sc.close();
+    }
+    
+    // Implement Your Solution Here
+
+    public static int maximumXor(int n,ArrayList<Integer> a){
+        Trie tr = new Trie();
+        // adding all numbers in trie
+        for(int num:a){
+            tr.insert(num);
+        }
+        // finding closest opposite number of number and corresponding xor
+        int maxXor=0;
+        for(int num:a){
+            int xor=0;
+            TrieNode curr= tr.root;
+            for(int i=31;i>=0;i--){
+                int bit= (num>>i) & 1;   // getting i th bit 
+                int oppBit = 1-bit;
+                if(curr.children[oppBit]!=null){
+                    xor = xor | 1<<i;   // found opp bit hence set ith bit of xor = 1
+                    curr=curr.children[oppBit];
+                }
+                else{
+                    // no need to set ith bit of xor =0; its 0 by default
+                    curr = curr.children[bit]; 
+                }   
+            }
+            maxXor= Math.max(maxXor,xor);
+
+        }
+        return maxXor;
+    }    
+}
