@@ -1,0 +1,76 @@
+For example, the root word "an", followed by the letters “other”, gives us the successor word “another”.
+Now, given a dictionary consisting of many root words and a sentence, you need to replace all the successor words in the sentence with 
+the root words forming them. If a successor word has many root words, replace it with the root word of the shortest length.
+
+import java.util.*;
+class TrieNode{
+        boolean isEnd;
+        TrieNode[] childrenArr = new TrieNode[26];
+        TrieNode(){
+
+        }
+}
+
+class Trie{
+        TrieNode root;
+        Trie(){
+            root= new TrieNode();
+        }
+        public void insert(String word){
+            TrieNode curr = root;
+            for(int i=0;i<word.length();i++){
+                char c= word.charAt(i);
+                if(curr.childrenArr[c-'a']==null){
+                    curr.childrenArr[c-'a']= new TrieNode();
+                }
+                curr= curr.childrenArr[c-'a'];
+            }
+            curr.isEnd = true;
+        }
+        public String getRoot(String word){
+            TrieNode curr = root;
+            for(int i=0;i<word.length();i++){
+                char c= word.charAt(i);
+                if(curr.childrenArr[c-'a']==null){
+                    return word;
+                }
+                curr= curr.childrenArr[c-'a'];
+                if(curr.isEnd==true){
+                    return word.substring(0,i+1);
+                }
+            }
+            return word;
+        }
+}
+
+public class ReplaceWords {
+    // Implement Your Solution Here 
+
+    public static String replaceWords(ArrayList<String>dict, String sentence){
+        Trie tr = new Trie();
+        for(String word: dict){
+            tr.insert(word);
+        }
+        String ans="";
+        for(String word:sentence.split("\\s")){
+            String replacement = tr.getRoot(word);
+            ans+=replacement;
+            ans+=" ";
+        }
+        return ans;   
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        ArrayList<String>dict = new ArrayList<String>();
+        for (int i = 0; i < n; i++) {
+            dict.add(sc.next());
+        }
+        String sentence = sc.nextLine();
+        sentence = sc.nextLine();
+        String ans = replaceWords(dict,sentence);
+        System.out.print(ans);
+        sc.close();
+    }    
+}
